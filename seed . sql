@@ -1,0 +1,10 @@
+INSERT INTO records (title, category, description, status)
+VALUES
+('Mathematics revision', 'Academic', 'I need help revising algebra before my examination.', 'Pending'),
+('Programming assistance', 'Technical', 'I need help understanding programming concepts.', 'In progress'),
+('Database practice', 'Academic', 'I need additional SQL exercises.', 'Pending'),
+('Assignment guidance', 'Academic', 'I need help completing my web technology assignment.', 'Completed'),
+('Internet access issue', 'Technical', 'I cannot access online learning materials.', 'Pending'),
+('Study group request', 'General', 'I would like to join a study group.', 'In progress'),
+('Project support', 'Technical', 'I need help debugging my programming project.', 'Pending'),
+('Examination preparation', 'Academic', 'I need revision materials for my examinations.', 'Completed');

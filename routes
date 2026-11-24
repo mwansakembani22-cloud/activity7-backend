@@ -1,0 +1,89 @@
+const express = require('express');
+const router = express.Router();
+const db = require('./db');
+
+// GET all records
+router.get('/', (req, res) => {
+  try {
+    const records = db.prepare('SELECT * FROM records').all();
+    res.json(records);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// GET one record
+router.get('/:id', (req, res) => {
+  try {
+    const record = db.prepare(
+      'SELECT * FROM records WHERE id = ?'
+    ).get(req.params.id);
+
+    if (!record) {
+      return res.status(404).json({ error: 'Record not found' });
+    }
+
+    res.json(record);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// CREATE a record
+router.post('/', (req, res) => {
+  try {
+    const { title, category, description, status } = req.body;
+
+    const result = db.prepare(`
+      INSERT INTO records (title, category, description, status)
+      VALUES (?, ?, ?, ?)
+    `).run(title, category, description, status || 'Pending');
+
+    res.status(201).json({
+      id: result.lastInsertRowid,
+      message: 'Record created successfully'
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// UPDATE a record
+router.put('/:id', (req, res) => {
+  try {
+    const { title, category, description, status } = req.body;
+
+    const result = db.prepare(`
+      UPDATE records
+      SET title = ?, category = ?, description = ?, status = ?
+      WHERE id = ?
+    `).run(title, category, description, status, req.params.id);
+
+    if (result.changes === 0) {
+      return res.status(404).json({ error: 'Record not found' });
+    }
+
+    res.json({ message: 'Record updated successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// DELETE a record
+router.delete('/:id', (req, res) => {
+  try {
+    const result = db.prepare(
+      'DELETE FROM records WHERE id = ?'
+    ).run(req.params.id);
+
+    if (result.changes === 0) {
+      return res.status(404).json({ error: 'Record not found' });
+    }
+
+    res.json({ message: 'Record deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+module.exports = router;
